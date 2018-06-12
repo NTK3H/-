@@ -216,10 +216,9 @@ int snack_move(si *si)
 	}
 	gotoxy(si->sp.x[0],si->sp.y[0]);
 	printf("*");
+	if(si->sp.x[si->len] == 0 || si->sp.y[si->len] == 0) return 1;
 	gotoxy(si->sp.x[si->len],si->sp.y[si->len]);
 	printf(" ");
-	gotoxy(-1,0);
-	printf("┌");
 }
 
 int snack_isfail(si *si)
