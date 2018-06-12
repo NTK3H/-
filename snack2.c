@@ -6,24 +6,24 @@
 #define MAX_X	60
 #define MAX_Y	20
 
-//¼ÇÂ¼ÉßµÄËùÓĞĞÅÏ¢
+//è®°å½•è›‡çš„æ‰€æœ‰ä¿¡æ¯
 typedef struct _snack_info{
-	unsigned int cur_dir:2;				//¼ÇÂ¼ÁËÉßµÄµ±Ç°×ßÏò£¬ÉÏÏÂ×óÓÒ·Ö±ğÓÃ0¡¢1¡¢2¡¢3±íÊ¾
-	unsigned long speed;				//¼ÇÂ¼ÁËÉßµÄËÙ¶È(ºÁÃëÎªµ¥Î»)
-	unsigned int len;					//¼ÇÂ¼ÁËÉßµÄ³¤¶È
-	struct _snack_position{				//¼ÇÂ¼ÁËÕûÌõÉßÃ¿¸ö½ÚµãµÄĞÅÏ¢
+	unsigned int cur_dir:2;				//è®°å½•äº†è›‡çš„å½“å‰èµ°å‘ï¼Œä¸Šä¸‹å·¦å³åˆ†åˆ«ç”¨0ã€1ã€2ã€3è¡¨ç¤º
+	unsigned long speed;				//è®°å½•äº†è›‡çš„é€Ÿåº¦(æ¯«ç§’ä¸ºå•ä½)
+	unsigned int len;					//è®°å½•äº†è›‡çš„é•¿åº¦
+	struct _snack_position{				//è®°å½•äº†æ•´æ¡è›‡æ¯ä¸ªèŠ‚ç‚¹çš„ä¿¡æ¯
 		int x[MAX_X*MAX_Y];
 		int y[MAX_X*MAX_Y];
 	} sp;
 } si;
 
-//¼ÇÂ¼ÁËÊ³Îï×ø±ê
+//è®°å½•äº†é£Ÿç‰©åæ ‡
 typedef struct _snack_food_position_info{
 	int x;
 	int y;
 } sfpi;
 
-/*º¯ÊıÉùÃ÷*/
+/*å‡½æ•°å£°æ˜*/
 si *si_init();
 int map_init();
 void err(char *info);
@@ -60,7 +60,7 @@ int main()
 			snack_newfood(si,fpi);
 			si->len++;
 		}
-		//´Ë¾ÙÎªÁË·ÀÖ¹ÆÁÄ»ÉÁË¸
+		//æ­¤ä¸¾ä¸ºäº†é˜²æ­¢å±å¹•é—ªçƒ
 		if(last_score != si->len-3)
 		{
 			refresh_score(si);
@@ -75,11 +75,11 @@ int main()
 	return 0;
 }
 
-//³õÊ¼»¯ÉßµÄËùÓĞĞÅÏ¢
+//åˆå§‹åŒ–è›‡çš„æ‰€æœ‰ä¿¡æ¯
 si *si_init()
 {
 	si *inf_si = (si*)malloc(sizeof(si));
-	inf_si->cur_dir = 3;		//¿ªÊ¼·½ÏòÏòÓÒ
+	inf_si->cur_dir = 3;		//å¼€å§‹æ–¹å‘å‘å³
 	inf_si->speed = 100;
 	inf_si->len = 3;
 	memset(inf_si->sp.x,0,sizeof inf_si->sp.x);
@@ -97,7 +97,7 @@ si *si_init()
 	return inf_si;
 }
 
-//³õÊ¼»¯µØÍ¼
+//åˆå§‹åŒ–åœ°å›¾
 int map_init()
 {
 	for(int i=0;i<MAX_Y+2;i++)
@@ -106,19 +106,19 @@ int map_init()
 		{
 			if(i==0)
 			{
-				if(j==0)printf("©°");
-				else if(j==MAX_X/2+1)printf("©´");
-				else printf("©¤");
+				if(j==0)printf("â”Œ");
+				else if(j==MAX_X/2+1)printf("â”");
+				else printf("â”€");
 			}
 			else if(i==MAX_Y+1)
 			{
-				if(j==0)printf("©¸");
-				else if(j==MAX_X/2+1)printf("©¼");
-				else printf("©¤");
+				if(j==0)printf("â””");
+				else if(j==MAX_X/2+1)printf("â”˜");
+				else printf("â”€");
 			}
 			else
 			{
-				if(j==0 || j==MAX_X/2+1)printf("©¦");
+				if(j==0 || j==MAX_X/2+1)printf("â”‚");
 				else printf("  ");
 			}
 		}
@@ -127,7 +127,7 @@ int map_init()
 	return 1;
 }
 
-//Èç¹û³ö´í»áµ÷ÓÃÕâ¸öº¯Êı
+//å¦‚æœå‡ºé”™ä¼šè°ƒç”¨è¿™ä¸ªå‡½æ•°
 void err(char *info)
 {
 	fprintf(stderr,"Error: %s\n",info);
@@ -145,7 +145,7 @@ void refresh_score(si *si)
 	printf("###############");
 }
 
-//¿ØÖÆÉß×ßÏòºÍ´¦ÀíÔİÍ£
+//æ§åˆ¶è›‡èµ°å‘å’Œå¤„ç†æš‚åœ
 void snack_dir(si *si)
 {
 	if(kbhit())
@@ -189,10 +189,10 @@ retry:
 	fpi->x=x;
 	fpi->y=y;
 	gotoxy(x,y);
-	printf("¡ö");
+	printf("â—");
 }
 
-//Õâ¸öº¯ÊıÊ¹Éß×ßÒ»²½
+//è¿™ä¸ªå‡½æ•°ä½¿è›‡èµ°ä¸€æ­¥
 int snack_move(si *si)
 {
 	for(int i=si->len-1;i>=0;i--)
@@ -220,7 +220,7 @@ int snack_move(si *si)
 			break;
 	}
 	gotoxy(si->sp.x[0],si->sp.y[0]);
-	printf("¡ö");
+	printf("â– ");
 	gotoxy(si->sp.x[si->len],si->sp.y[si->len]);
 	printf(" ");
 }
