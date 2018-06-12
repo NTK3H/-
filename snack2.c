@@ -181,7 +181,7 @@ retry:
 	y = rand()%MAX_Y+1;
 	if(!(x&1))
 		x++;
-	if(x>MAX_X+2)
+	if(x>MAX_X)
 		x-=2;
 	for(int i=0;i<si->len;i++)
 		if(x == si->sp.x[i] && y == si->sp.y[i])
