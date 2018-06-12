@@ -38,6 +38,9 @@ void help();
 
 int main()
 {
+	CONSOLE_CURSOR_INFO cursor_info = {1, 0}; 
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursor_info);
+	SetConsoleTitle("Retro Snaker");
 	si *si = si_init();
 	if(si == NULL)
 		err("Failed to init, please check init info");
