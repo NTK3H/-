@@ -246,7 +246,7 @@ int snack_isfail(si *si)
 
 int snack_iswin(si *si)
 {
-	if(si->len == MAX_X*MAX_Y)
+	if(si->len >= MAX_X*MAX_Y)
 	{
 		gotoxy(MAX_X/2-5,MAX_Y/2);
 		printf("You Win!");
