@@ -2,23 +2,23 @@
 #include <conio.h>
 #include <time.h>
 #include <windows.h>
-#include <pthread.h>
 
 #define MAX_X	60
 #define MAX_Y	20
 
 //记录蛇的所有信息
 typedef struct _snack_info{
-	unsigned int cur_dir:2;		//记录了蛇的当前走向，上下左右分别用0、1、2、3表示
-	unsigned long speed;		//记录了蛇的速度(毫秒为单位)
-	unsigned int len;		//记录了蛇的长度
-	struct _snack_position{		//记录了整条蛇每个节点的信息
+	unsigned int cur_dir:2;				//记录了蛇的当前走向，上下左右分别用0、1、2、3表示
+	unsigned long speed;				//记录了蛇的速度(毫秒为单位)
+	unsigned int len;					//记录了蛇的长度
+	struct _snack_position{				//记录了整条蛇每个节点的信息
 		int x[MAX_X*MAX_Y];
 		int y[MAX_X*MAX_Y];
 	} sp;
 } si;
 
-typedef struct _snack_food_position_info{		//记录了食物坐标和该食物是否还存在
+//记录了食物坐标
+typedef struct _snack_food_position_info{
 	int x;
 	int y;
 } sfpi;
@@ -28,12 +28,13 @@ si *si_init();
 int map_init();
 void err(char *info);
 void refresh_score(si *si);
-void *snack_dir();
+void snack_dir();
 int snack_newfood(si *si, sfpi *fpi);
 int snack_move(si *si);
 int snack_isfail(si *si);
 int snack_iswin(si *si);
 void gotoxy(int x,int y);
+void help();
 
 int main()
 {
@@ -42,8 +43,9 @@ int main()
 		err("Failed to init, please check init info");
 	sfpi *fpi = (sfpi*)malloc(sizeof(sfpi));
 	map_init();
-	pthread_t dir;
-	pthread_create(&dir,NULL,snack_dir,si);
+	help();
+	refresh_score(si);
+	int last_score = 0;
 	srand((unsigned) time (NULL));
 	snack_newfood(si,fpi);
 	while("Enjoy :)")
@@ -54,10 +56,16 @@ int main()
 			snack_newfood(si,fpi);
 			si->len++;
 		}
-		refresh_score(si);
+		//此举为了防止屏幕闪烁
+		if(last_score != si->len-3)
+		{
+			refresh_score(si);
+			last_score = si->len-3;
+		}
 		snack_isfail(si);
 		snack_iswin(si);
 		Sleep(si->speed);
+		snack_dir(si);
 	}
 	getch();
 	return 0;
@@ -125,49 +133,51 @@ void err(char *info)
 
 void refresh_score(si *si)
 {
-	gotoxy(MAX_X+7,10);
-	printf("Score:%d   ",si->len-3);
+	gotoxy(MAX_X+3,3);
+	printf("###############");
+	gotoxy(MAX_X+3,4);
+	printf("#  Score:%3d  #",si->len-3);
+	gotoxy(MAX_X+3,5);
+	printf("###############");
 }
 
-//控制蛇走向,为了实现实时控制为其采用了多线程实现
-void *snack_dir(si *si)
+//控制蛇走向和处理暂停
+void snack_dir(si *si)
 {
-	while(1)
-	{
+	if(kbhit())
 		switch(getch())
 		{
 			case 'w':
-				if(si->cur_dir==1)break;
-				si->cur_dir = 0;
+				if(si->cur_dir!=1)
+					si->cur_dir = 0;
 				break;
 			case 's':
-				if(si->cur_dir==0)break;
-				si->cur_dir = 1;
+				if(si->cur_dir!=0)
+					si->cur_dir = 1;
 				break;
 			case 'a':
-				if(si->cur_dir==3)break;
-				si->cur_dir = 2;
+				if(si->cur_dir!=3)
+					si->cur_dir = 2;
 				break;
 			case 'd':
-				if(si->cur_dir==2)break;
-				si->cur_dir = 3;
+				if(si->cur_dir!=2)
+					si->cur_dir = 3;
+				break;
+			case ' ':
+				getch();
 				break;
 		}
-	}
 }
 
 int snack_newfood(si *si, sfpi *fpi)
 {
 	int x,y;
-	while(1)
-	{
-		x = rand()%MAX_X+1;
-		y = rand()%MAX_Y+1;
-		for(int i=0;i<si->len;i++)
-			if(x == si->sp.x[i] && y == si->sp.y[i])
-				continue;
-		break;
-	}
+retry:
+	x = rand()%MAX_X+1;
+	y = rand()%MAX_Y+1;
+	for(int i=0;i<si->len;i++)
+		if(x == si->sp.x[i] && y == si->sp.y[i])
+			goto retry;
 	fpi->x=x;
 	fpi->y=y;
 	gotoxy(x,y);
@@ -242,13 +252,27 @@ int snack_iswin(si *si)
 
 void gotoxy(int x,int y)
 {
-    CONSOLE_SCREEN_BUFFER_INFO        csbiInfo;
-    HANDLE    hConsoleOut;
+	CONSOLE_SCREEN_BUFFER_INFO        csbiInfo;
+	HANDLE    hConsoleOut;
 
-    hConsoleOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    GetConsoleScreenBufferInfo(hConsoleOut,&csbiInfo);
+	hConsoleOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleScreenBufferInfo(hConsoleOut,&csbiInfo);
 
-    csbiInfo.dwCursorPosition.X = x+1;
-    csbiInfo.dwCursorPosition.Y = y;
-    SetConsoleCursorPosition(hConsoleOut,csbiInfo.dwCursorPosition);
+	csbiInfo.dwCursorPosition.X = x+1;
+	csbiInfo.dwCursorPosition.Y = y;
+	SetConsoleCursorPosition(hConsoleOut,csbiInfo.dwCursorPosition);
+}
+
+void help()
+{
+	gotoxy(MAX_X+3,11);
+	printf("Control key:");
+	gotoxy(MAX_X+8,12);
+	printf("w");
+	gotoxy(MAX_X+6,13);
+	printf("a s d");
+	gotoxy(MAX_X+3,15);
+	printf("Pause:");
+	gotoxy(MAX_X+6,16);
+	printf("Space key");
 }
