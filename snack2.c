@@ -223,6 +223,8 @@ int snack_move(si *si)
 	printf("■");
 	gotoxy(si->sp.x[si->len],si->sp.y[si->len]);
 	printf(" ");
+	gotoxy(-1,0);
+	printf("┌");
 }
 
 int snack_isfail(si *si)
