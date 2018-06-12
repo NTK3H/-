@@ -10,7 +10,7 @@
 typedef struct _snack_info{
 	unsigned int cur_dir:2;				//记录了蛇的当前走向，上下左右分别用0、1、2、3表示
 	unsigned long speed;				//记录了蛇的速度(毫秒为单位)
-	unsigned int len;					//记录了蛇的长度
+	unsigned int len;				//记录了蛇的长度
 	struct _snack_position{				//记录了整条蛇每个节点的信息
 		int x[MAX_X*MAX_Y];
 		int y[MAX_X*MAX_Y];
