@@ -42,10 +42,10 @@ int main()
 		err("Failed to init, please check init info");
 	sfpi *fpi = (sfpi*)malloc(sizeof(sfpi));
 	map_init();
-	snack_newfood(si,fpi);
 	pthread_t dir;
 	pthread_create(&dir,NULL,snack_dir,si);
 	srand((unsigned) time (NULL));
+	snack_newfood(si,fpi);
 	while("Enjoy :)")
 	{
 		snack_move(si);
